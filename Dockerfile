@@ -38,7 +38,7 @@ RUN touch /home/$NBUSER/.curlrc
 RUN chown $NBUSER /home/$NBUSER/.curlrc
 RUN echo 'cacert=/etc/ssl/certs/ca-certificates.crt' > $HOME/.curlrc
 RUN wget https://julialang.s3.amazonaws.com/bin/linux/x64/0.5/julia-0.5.0-linux-x86_64.tar.gz
-RUN mkdir $HOME/julia
+RUN mkdir $HOME/.opt/julia
 RUN tar xvf julia-0.5.0-linux-x86_64.tar.gz -C $HOME/.opt/julia --strip-components=1
 RUN rm julia-0.5.0-linux-x86_64.tar.gz
 ENV PATH /home/dynosaur/.opt/julia/bin:$PATH
