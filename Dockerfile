@@ -23,6 +23,7 @@ USER dynosaur
 ENV NBUSER=dynosaur
 RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 RUN bash Miniconda3-latest-Linux-x86_64.sh -b -p /home/dynosaur/.opt/miniconda
+RUN rm Miniconda3-latest-Linux-x86_64.sh
 RUN /home/dynosaur/.opt/miniconda/bin/conda install -y -c conda-forge jupyterlab
 ENV PATH /home/dynosaur/.opt/miniconda/bin:$PATH
 CMD ["jupyter", "lab", "--ip=0.0.0.0"]
@@ -38,8 +39,9 @@ RUN chown $NBUSER /home/$NBUSER/.curlrc
 RUN echo 'cacert=/etc/ssl/certs/ca-certificates.crt' > $HOME/.curlrc
 RUN wget https://julialang.s3.amazonaws.com/bin/linux/x64/0.5/julia-0.5.0-linux-x86_64.tar.gz
 RUN mkdir $HOME/julia
-RUN tar xvf julia-0.5.0-linux-x86_64.tar.gz -C $HOME/julia --strip-components=1
-ENV PATH /home/dynosaur/julia/bin:$PATH
+RUN tar xvf julia-0.5.0-linux-x86_64.tar.gz -C $HOME/.opt/julia --strip-components=1
+RUN rm julia-0.5.0-linux-x86_64.tar.gz
+ENV PATH /home/dynosaur/.opt/julia/bin:$PATH
 
 # Install IJulia kernel
 RUN julia -e 'ENV["JUPYTER"]="/home/dynosaur/.opt/miniconda/bin/jupyter";Pkg.add("IJulia")'
@@ -60,3 +62,7 @@ RUN julia -e 'Pkg.clone("https://github.com/EconForge/splines.jl.git")'
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dolo.jl.git")'
 RUN julia -e 'cd(Pkg.dir("YAML"));run(`git checkout tags`)'
 RUN julia -e 'using Dolo;using YAML'
+
+
+# cleanup
+
