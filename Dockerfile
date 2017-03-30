@@ -49,19 +49,18 @@ RUN julia -e 'ENV["JUPYTER"]="/home/dynosaur/.opt/miniconda/bin/jupyter";Pkg.add
 
 RUN julia -e 'Pkg.add("PyPlot"); \
               Pkg.add("Gadfly"); \
-              Pkg.add("SymEngine")'
+              Pkg.add("SymEngine"); \
+              Pkg.add("YAML")'
 
 
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dolang.git")'
-
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dyno.git")'
 RUN julia -e 'Pkg.build("Dyno") '
 RUN julia -e 'using Dyno'
 #
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/splines.jl.git")'
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dolo.jl.git")'
-RUN julia -e 'cd(Pkg.dir("YAML"));run(`git checkout tags`)'
-RUN julia -e 'using Dolo;using YAML'
+RUN julia -e 'using Dolo'
 
 
 # cleanup
