@@ -29,39 +29,44 @@ ENV PATH /home/dynosaur/.opt/miniconda/bin:$PATH
 CMD ["jupyter", "lab", "--ip=0.0.0.0"]
 
 
-##################
-###### Julia #####
-##################
-
+# ##################
+# ###### Julia #####
+# ##################
+#
 USER $NBUSER
 RUN touch /home/$NBUSER/.curlrc
 RUN chown $NBUSER /home/$NBUSER/.curlrc
 RUN echo 'cacert=/etc/ssl/certs/ca-certificates.crt' > $HOME/.curlrc
-RUN wget https://julialang.s3.amazonaws.com/bin/linux/x64/0.5/julia-0.5.0-linux-x86_64.tar.gz
+RUN wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.0-linux-x86_64.tar.gz
 RUN mkdir $HOME/.opt/julia
-RUN tar xvf julia-0.5.0-linux-x86_64.tar.gz -C $HOME/.opt/julia --strip-components=1
-RUN rm julia-0.5.0-linux-x86_64.tar.gz
+RUN tar xvf julia-0.6.0-linux-x86_64.tar.gz -C $HOME/.opt/julia --strip-components=1
+RUN rm julia-0.6.0-linux-x86_64.tar.gz
 ENV PATH /home/dynosaur/.opt/julia/bin:$PATH
-
-# Install IJulia kernel
-RUN julia -e 'ENV["JUPYTER"]="/home/dynosaur/.opt/miniconda/bin/jupyter";Pkg.add("IJulia")'
-
-
+#
+# # Install IJulia kernel
+RUN julia -e 'Pkg.add("IJulia")'
+#
+#
 RUN julia -e 'Pkg.add("PyPlot"); \
-              Pkg.add("Gadfly"); \
-              Pkg.add("SymEngine"); \
-              Pkg.add("YAML")'
+           Pkg.add("Gadfly"); \
+           Pkg.add("SymEngine"); \
+           Pkg.add("AxisArrays"); \
+           Pkg.add("YAML")'
 
-
+#
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dolang.git")'
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dyno.git")'
-RUN julia -e 'Pkg.build("Dyno") '
-RUN julia -e 'using Dyno'
-#
-RUN julia -e 'Pkg.clone("https://github.com/EconForge/splines.jl.git")'
+RUN julia -e 'Pkg.build("Dyno")'
+# #
+USER root
+RUN apt-get install --no-install-recommends -y libfftw3-double3 libfftw3-single3
+
+USER $NBUSER
 RUN julia -e 'Pkg.clone("https://github.com/EconForge/Dolo.jl.git")'
 RUN julia -e 'using Dolo'
 
-
-# cleanup
-
+RUN git clone https://github.com/EconForge/dolo_models.git /home/dynosaur/dolo_examples
+#
+#
+# # cleanup
+#
